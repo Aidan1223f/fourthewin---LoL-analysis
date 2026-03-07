@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project 4: League of Legends – Jhin Bot Analysis</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      color: #1a1a1a;
+      background: #fafafa;
+    }
+    h1 { font-size: 1.75rem; margin-bottom: 0.25rem; }
+    .subtitle { color: #555; margin-bottom: 1.5rem; }
+    .meta { font-size: 0.95rem; color: #666; margin-bottom: 2rem; }
+    a { color: #0969da; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    h2 { font-size: 1.2rem; margin-top: 2rem; margin-bottom: 0.75rem; }
+    p { margin-bottom: 1rem; }
+    .figure {
+      margin: 1.5rem 0;
+      padding: 0.75rem;
+      background: #fff;
+      border: 1px solid #eaeaea;
+      border-radius: 8px;
+    }
+    .figure img { max-width: 100%; height: auto; display: block; border-radius: 4px; }
+    .figure .caption { font-size: 0.9rem; color: #555; margin-top: 0.5rem; }
+    footer { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid #eee; color: #666; font-size: 0.9rem; }
+    code { background: #eee; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+  <h1>Project 4: League of Legends</h1>
+  <p class="subtitle">Jhin bot performance in 2026 LoL esports</p>
+  <p class="meta"><strong>Name(s):</strong> Aidan Nguyen-Tran · DSC 80, Winter 2026</p>
+
+  <h2>Research question</h2>
+  <p><strong>Is Jhin more likely to win or lose any given match?</strong></p>
+  <p>This project uses 2026 League of Legends esports match data (OraclesElixir) to explore Jhin bot pick outcomes, win rates by league, and relationships between gold, damage, K/D, and game result.</p>
+
+  <h2>Data &amp; methods</h2>
+  <p>We filter for complete games where Jhin was played in the bot position, then perform exploratory data analysis, missingness assessment, hypothesis testing, and prediction (baseline and final model) with fairness analysis.</p>
+
+  <h2>Key visualizations</h2>
+
+  <div class="figure">
+    <img src="jhin_wl.png" alt="Jhin bot win vs loss proportion">
+    <p class="caption">Jhin bot: Win vs loss proportion</p>
+  </div>
+  <div class="figure">
+    <img src="jhin_wr_by_league.png" alt="Jhin bot winrate by league">
+    <p class="caption">Jhin bot win rate by league</p>
+  </div>
+  <div class="figure">
+    <img src="KD_JhinBot.png" alt="Kills vs deaths colored by outcome">
+    <p class="caption">Kills vs deaths (colored by game outcome)</p>
+  </div>
+  <div class="figure">
+    <img src="goldvsdmgJhin.png" alt="Gold vs damage to champions">
+    <p class="caption">Total gold vs damage to champions</p>
+  </div>
+  <div class="figure">
+    <img src="numericasummary.png" alt="Numeric summary">
+    <p class="caption">Numeric summary (Jhin bot)</p>
+  </div>
+
+  <h2>Full analysis</h2>
+  <p>Code, tables, and full narrative are in the Jupyter notebook. For the full report with interactive Plotly figures, open the notebook in the course repo or your fork.</p>
+
+  <footer>
+    <p>Data: <a href="https://oracleselixir.com/">OraclesElixir</a> · Course: <a href="https://github.com/dsc-courses/dsc80-2026-wi">DSC 80, Winter 2026</a></p>
+  </footer>
+</body>
+</html>
