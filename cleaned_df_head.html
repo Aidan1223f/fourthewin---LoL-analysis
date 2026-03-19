@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>jhin_df preview</title>
+<style>
+*{box-sizing:border-box}body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;margin:0;padding:1rem 1.25rem;background:#f6f7f9;color:#1a1a1a}
+h1{font-size:1rem;font-weight:600;margin:0 0 .75rem 0;color:#374151}
+.table-wrap{overflow-x:auto;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.08);border:1px solid #e5e7eb;background:#fff}
+table.data-table{width:100%;border-collapse:collapse;font-size:.8125rem;line-height:1.4}
+table.data-table thead th{background:linear-gradient(180deg,#1e3a5f 0%,#152a45 100%);color:#f9fafb;font-weight:600;text-align:left;padding:.65rem .85rem;white-space:nowrap;border-bottom:2px solid #0f172a}
+table.data-table tbody td{padding:.55rem .85rem;border-bottom:1px solid #f0f1f3;vertical-align:top}
+table.data-table tbody tr:nth-child(even){background:#fafbfc}
+table.data-table tbody tr:hover{background:#f0f4f8}
+table.data-table tbody tr:last-child td{border-bottom:none}
+table.data-table th:first-child,table.data-table td:first-child{font-weight:500;color:#6b7280;background:#f9fafb}
+.caption{margin-top:.65rem;font-size:.8rem;color:#6b7280}
+</style></head><body>
+<h1>First five rows of <code style="background:#e5e7eb;padding:.15rem .35rem;border-radius:4px;">jhin_df</code> (key columns)</h1>
+<div class="table-wrap"><table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>gameid</th>
+      <th>datacompleteness</th>
+      <th>league</th>
+      <th>year</th>
+      <th>split</th>
+      <th>playoffs</th>
+      <th>date</th>
+      <th>game</th>
+      <th>patch</th>
+      <th>side</th>
+      <th>playername</th>
+      <th>teamname</th>
+      <th>result</th>
+      <th>kills</th>
+      <th>deaths</th>
+      <th>assists</th>
+      <th>totalgold</th>
+      <th>damagetochampions</th>
+      <th>gamelength</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>LOLTMNT03_335584</td>
+      <td>complete</td>
+      <td>LCKC</td>
+      <td>2026</td>
+      <td>Kickoff</td>
+      <td>0</td>
+      <td>2026-01-12 05:10:10</td>
+      <td>1</td>
+      <td>16.01</td>
+      <td>Red</td>
+      <td>Enosh</td>
+      <td>DN SOOPers Challengers</td>
+      <td>0</td>
+      <td>3</td>
+      <td>8</td>
+      <td>7</td>
+      <td>12086</td>
+      <td>18637</td>
+      <td>1817</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>LOLTMNT03_335649</td>
+      <td>complete</td>
+      <td>LCKC</td>
+      <td>2026</td>
+      <td>Kickoff</td>
+      <td>0</td>
+      <td>2026-01-12 09:34:28</td>
+      <td>1</td>
+      <td>16.01</td>
+      <td>Red</td>
+      <td>Cypher</td>
+      <td>T1 Esports Academy</td>
+      <td>0</td>
+      <td>4</td>
+      <td>5</td>
+      <td>2</td>
+      <td>15262</td>
+      <td>19074</td>
+      <td>1926</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>LOLTMNT03_335767</td>
+      <td>complete</td>
+      <td>LCKC</td>
+      <td>2026</td>
+      <td>Kickoff</td>
+      <td>0</td>
+      <td>2026-01-13 08:03:22</td>
+      <td>1</td>
+      <td>16.01</td>
+      <td>Red</td>
+      <td>MUDAI</td>
+      <td>Gen.G Global Academy</td>
+      <td>0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>4</td>
+      <td>13382</td>
+      <td>15922</td>
+      <td>1775</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>LOLTMNT01_318877</td>
+      <td>complete</td>
+      <td>ROL</td>
+      <td>2026</td>
+      <td>Winter</td>
+      <td>0</td>
+      <td>2026-01-13 21:23:33</td>
+      <td>1</td>
+      <td>16.01</td>
+      <td>Red</td>
+      <td>Henry Snow</td>
+      <td>Dynasty</td>
+      <td>0</td>
+      <td>5</td>
+      <td>6</td>
+      <td>5</td>
+      <td>12305</td>
+      <td>16903</td>
+      <td>1543</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>LOLTMNT03_336084</td>
+      <td>complete</td>
+      <td>LCK</td>
+      <td>2026</td>
+      <td>Cup</td>
+      <td>0</td>
+      <td>2026-01-14 12:11:18</td>
+      <td>2</td>
+      <td>16.01</td>
+      <td>Red</td>
+      <td>Teddy</td>
+      <td>HANJIN BRION</td>
+      <td>0</td>
+      <td>1</td>
+      <td>4</td>
+      <td>2</td>
+      <td>10249</td>
+      <td>12806</td>
+      <td>1530</td>
+    </tr>
+  </tbody>
+</table></div><p class="caption">Subset of columns for readability; full cleaned DataFrame has additional fields.</p></body></html>

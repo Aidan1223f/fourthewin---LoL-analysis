@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project 4: League of Legends – Jhin Bot Analysis</title>
+  <title>Four the Win: Jhin Bot by the Numbers | DSC 80 Project 4</title>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -31,23 +31,73 @@
     }
     .figure img { max-width: 100%; height: auto; display: block; border-radius: 4px; }
     .figure .caption { font-size: 0.9rem; color: #555; margin-top: 0.5rem; }
+    table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+    th, td { border: 1px solid #eaeaea; padding: 0.35rem 0.5rem; text-align: left; }
+    th { background: #f5f5f5; }
     footer { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid #eee; color: #666; font-size: 0.9rem; }
     code { background: #eee; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.9em; }
+    .banner { width: 100%; max-height: 220px; object-fit: cover; object-position: center top; display: block; margin-bottom: 1.5rem; border-radius: 8px; }
   </style>
 </head>
 <body>
-  <h1>Project 4: League of Legends</h1>
-  <p class="subtitle">Jhin bot performance in 2026 LoL esports</p>
+  <img class="banner" src="jhin_banner.jpg" alt="Jhin, the Virtuoso">
+  <h1>Four the Win: Jhin Bot by the Numbers</h1>
+  <p class="subtitle">Statistical analysis of Jhin in the bot lane, 2026 LoL esports (OraclesElixir)</p>
   <p class="meta"><strong>Name(s):</strong> Aidan Nguyen-Tran · DSC 80, Winter 2026</p>
 
-  <h2>Research question</h2>
-  <p><strong>Is Jhin more likely to win or lose any given match?</strong></p>
-  <p>This project uses 2026 League of Legends esports match data (OraclesElixir) to explore Jhin bot pick outcomes, win rates by league, and relationships between gold, damage, K/D, and game result.</p>
+  <h2>Introduction</h2>
+  <p>League of Legends (LoL) is a popular multiplayer online battle arena (MOBA) game developed by Riot Games. With millions of players worldwide, it has become one of the most influential and widely played esports in the gaming industry. The dataset we work with is professional match data from Oracle's Elixir, recording outcomes and statistics from LoL esports matches in 2026.</p>
+  <p>This dataset captures key gameplay statistics and outcomes from a collection of LoL matches, offering a rich source of information for understanding player performance, team dynamics, and match results. It includes features such as individual player stats (kills, deaths, gold, damage, creep score), draft and context (champion, position, league, side), and match-level information such as game length and result. We restrict our analysis to 2026 data only: the game meta (viable champions, item builds, and strategies) changes frequently across patches and seasons, and focusing on a single year allows us to rely on our knowledge of the current meta when interpreting results.</p>
+  <p>Champion choice in a given role holds significant weight and can shape the trajectory of a match. The bot lane or ADC(Attack Damage Carry) role is central to late-game scaling. Jhin, as a marksman often played in the bot position, is my personal favorite champion and I chose to analyze him for this project.</p>
+  <p>The central question we are interested in is: <strong>is Jhin, when played in the bot lane, more likely to win or lose any given match?</strong> We use data analysis techniques to explore the relationship between Jhin bot picks and other in-game statistics, including individual performance (kills, deaths, gold, damage), game context (league, side, game length), and ultimately match outcome. We then build a prediction model to predict win or loss for Jhin bot games. This predictive model can help clarify which factors are associated with Jhin bot success and support a data-informed view of his effectiveness in professional play.</p>
 
-  <h2>Data &amp; methods</h2>
-  <p>We filter for complete games where Jhin was played in the bot position, then perform exploratory data analysis, missingness assessment, hypothesis testing, and prediction (baseline and final model) with fairness analysis.</p>
+  <p><strong>Dataset summary.</strong> The 2026 Oracle's Elixir file has 19,284 rows in total. After removing team-level rows (<code>position == 'team'</code>), there are 16,070 player-level rows. For Jhin-specific analysis we further restrict to rows where <code>champion == 'Jhin'</code>, <code>position == 'bot'</code>, and <code>datacompleteness == 'complete'</code>, yielding 141 rows (<code>jhin_df</code>). The columns most relevant to our question and their descriptions are:</p>
+  <ul>
+    <li><code>result</code>: Match outcome for the player's team (1 = win, 0 = loss). This is our target variable for prediction.</li>
+    <li><code>champion</code>: Champion played (e.g. Jhin). Used to filter to Jhin bot games.</li>
+    <li><code>position</code>: In-game role (e.g. top, jng, mid, bot). We keep only bot for our analysis sample.</li>
+    <li><code>league</code>: Professional league or tournament (e.g. LEC, LCK). Context for where the match was played.</li>
+    <li><code>side</code>: Team side (Blue or Red). Draft and map context.</li>
+    <li><code>kills</code>: Number of enemy champions the player killed.</li>
+    <li><code>deaths</code>: Number of times the player was killed.</li>
+    <li><code>totalgold</code>: Total gold earned by the player by the end of the game.</li>
+    <li><code>damagetochampions</code>: Total damage dealt to enemy champions.</li>
+    <li><code>gamelength</code>: Duration of the match in seconds. Same for all players in a given game.</li>
+    <li><code>total cs</code>: Total creep score (minions and monsters killed). Measures farming and resource income.</li>
+  </ul>
 
-  <h2>Key visualizations</h2>
+  <h2>Data Cleaning and Exploratory Data Analysis</h2>
+  <p>The data come from OraclesElixir: one row per player per game, with match metadata (league, split, date, patch), draft (champion, side), and in-game stats (kills, deaths, gold, damage, etc.). We clean as follows.</p>
+  <ul>
+    <li><strong>Filter to analysis sample:</strong> Keep only rows where <code>champion == 'Jhin'</code>, <code>position == 'bot'</code>, and <code>datacompleteness == 'complete'</code>. This gives us Jhin bot games with full stats for our EDA and hypothesis tests.</li>
+    <li><strong>Drop redundant columns:</strong> Remove team-level columns (e.g. <code>pick1</code> to <code>pick5</code>, <code>firstdragon</code>, <code>towers</code>, <code>heralds</code>, <code>barons</code>, etc.) that duplicate information or are not needed at player level, and ID columns (<code>url</code>, <code>playerid</code>, <code>teamid</code>, <code>participantid</code>, <code>position</code>, <code>champion</code>) to avoid redundancy after filtering.</li>
+    <li><strong>Derived column:</strong> Create <code>KDA</code> as (kills + assists) / deaths (with 0 deaths replaced by 1 to avoid division by zero).</li>
+    <li><strong>Reset index:</strong> <code>reset_index(drop=True)</code> after drops so the cleaned DataFrame has a clean integer index.</li>
+  </ul>
+  <p>These steps ensure we work with a player-level, Jhin-bot-only dataset with complete records and a consistent index for plotting and aggregation.</p>
+  <p><strong>Head of cleaned DataFrame (<code>jhin_df</code>):</strong></p>
+  <div class="figure">
+    <iframe src="cleaned_df_head.html" title="Head of cleaned DataFrame" width="100%" height="280" style="border: 1px solid #eaeaea; border-radius: 4px; background: #fff;"></iframe>
+    <p class="caption">First five rows of <code>jhin_df</code> after cleaning.</p>
+  </div>
+
+  <p>We look at the distribution of a single variable at a time (univariate). Below is the distribution of <strong>game outcome (Win/Loss)</strong> for Jhin bot.</p>
+  <div class="figure">
+    <iframe src="univariate_plot.html" title="Univariate: outcome distribution" width="100%" height="420" style="border: 1px solid #eaeaea; border-radius: 4px;"></iframe>
+    <p class="caption">Distribution of game outcome for Jhin bot: proportion of wins vs losses.</p>
+  </div>
+
+  <p>We look at pairs of columns to identify associations (bivariate). Below is the relationship between <strong>kills</strong> and <strong>deaths</strong>, colored by outcome.</p>
+  <div class="figure">
+    <iframe src="bivariate_plot.html" title="Bivariate: kills vs deaths" width="100%" height="450" style="border: 1px solid #eaeaea; border-radius: 4px;"></iframe>
+    <p class="caption">Kills vs deaths for Jhin bot, colored by Win/Loss.</p>
+  </div>
+
+  <p>We group by <strong>league</strong> and <strong>side</strong> (Blue/Red) and aggregate win rate (<code>result</code> mean) for Jhin bot games.</p>
+  <div class="figure">
+    <iframe src="pivot_table.html" title="Pivot: win rate by league and side" width="100%" height="420" style="border: 1px solid #eaeaea; border-radius: 4px; background: #fff;"></iframe>
+    <p class="caption">Jhin bot win rate by league and side.</p>
+  </div>
 
   <div class="figure">
     <img src="jhin_wl.png" alt="Jhin bot win vs loss proportion">
@@ -70,8 +120,51 @@
     <p class="caption">Numeric summary (Jhin bot)</p>
   </div>
 
-  <h2>Full analysis</h2>
-  <p>Code, tables, and full narrative are in the Jupyter notebook. For the full report with interactive Plotly figures, open the notebook in the course repo or your fork.</p>
+  <h2>Assessment of Missingness</h2>
+  <p><strong>MNAR analysis.</strong> <code>golddiffat15</code> (and related timeline columns like <code>goldat15</code>, <code>xpat15</code>, <code>csat15</code>) are <strong>MNAR (missing not at random)</strong>. Of the 167 Jhin bot rows in this dataset, 26 have null values for <code>golddiffat15</code>. Every single one of those 26 rows belongs to the <strong>LPL</strong>. The LPL does not share granular in-game timeline data with Oracle's Elixir as a matter of policy. The missingness is therefore tied to an unobserved external variable (the league's data-sharing agreement with the data provider), not to anything we can directly observe in the dataset. This makes it MNAR rather than MAR: we cannot explain or predict the missingness purely from other columns. To make this missingness MAR we would need an extra column in the dataset that encodes whether each league shares timeline data with the provider. For example, a column such as <code>timeline_data_available</code> or <code>data_sharing_tier</code> would record this for each row (e.g. by league), so we could explain and model the missingness from observed data rather than from unobserved policy. Without that column, any analysis using <code>golddiffat15</code> should either drop the 26 LPL rows or restrict to features available across all leagues.</p>
+
+  <p><strong>Permutation tests.</strong> We assess whether the missingness of <code>goldat25</code> (gold at 25 minutes) is related to other columns. <strong>Test 1, Missingness and <code>datacompleteness</code>:</strong> We test whether the distribution of <code>datacompleteness</code> differs when <code>goldat25</code> is missing vs when it is observed. The test statistic is the <strong>total variation distance (TVD)</strong>. We run 1,000 permutations. <strong>Test 2, Missingness and <code>result</code>:</strong> We test whether mean <code>result</code> (win rate) differs when <code>goldat25</code> is missing vs observed; test statistic is the absolute difference in mean <code>result</code>.</p>
+  <p><strong>Results and interpretation.</strong> Test 1, observed TVD = <strong>0.6557</strong>, p-value = <strong>0.0010</strong>; Test 2, observed |diff in mean result| = <strong>0.000000</strong>, p-value = <strong>1.0000</strong> (α = 0.05). The p-value for Test 1 is small, so we reject the null and conclude the data are consistent with <code>goldat25</code> missingness being related to <code>datacompleteness</code>. The p-value for Test 2 is large, so we do not have evidence that missingness is related to win/loss.</p>
+
+  <div class="figure">
+    <iframe src="missingness_distribution.html" title="Distribution of datacompleteness by goldat25 missingness" width="100%" height="420" style="border: 1px solid #eaeaea; border-radius: 4px;"></iframe>
+    <p class="caption">Distribution of <code>datacompleteness</code> by <code>goldat25</code> missingness.</p>
+  </div>
+  <div class="figure">
+    <iframe src="missingness_tvd_histogram.html" title="Permutation TVD and observed statistic" width="100%" height="420" style="border: 1px solid #eaeaea; border-radius: 4px;"></iframe>
+    <p class="caption">Permutation distribution of TVD with observed TVD (0.656) marked (off scale to the right).</p>
+  </div>
+
+  <h2>Hypothesis Testing</h2>
+  <p>We test whether the proportion of matches Jhin (bot) wins differs from 0.5. <strong>Null hypothesis (H₀):</strong> The proportion of matches Jhin wins is 0.5. <strong>Alternative hypothesis (H₁):</strong> The proportion of matches Jhin wins is not 0.5. We use a <strong>binomial test</strong> (two-sided); test statistic is the number of wins; significance level α = 0.05.</p>
+  <p><strong>Results.</strong> Observed proportion of Jhin wins: <strong>0.4752</strong> (67 wins out of 141 games). <strong>p-value = 0.6135</strong>. At α = 0.05 we <strong>fail to reject H₀</strong>. The data are consistent with Jhin's true win proportion being 0.5.</p>
+  <div class="figure">
+    <img src="jhin_wl.png" alt="Jhin bot win vs loss proportion">
+    <p class="caption">Jhin bot: Win vs loss proportion (hypothesis test).</p>
+  </div>
+
+  <h2>Framing a Prediction Problem</h2>
+  <p><This is a <strong>binary classification</strong>: there are exactly two labels (win vs loss). We are <em>not</em> doing multiclass classification (e.g. we do not predict placement, patch tier, or more than two outcome categories).</p>
+  <p><strong>Response variable.</strong> The variable we predict is <code>result</code>. <strong>1</strong> if the Jhin bot player’s team <strong>won</strong> the match and <strong>0</strong> if they <strong>lost</strong>. We chose it because we are asking whether Jhin bot games tend to win or lose and <strong>which measurable factors align with that outcome</strong> the match result is the clearest indicator of “success”</p>
+  <p><strong>Time of prediction and features</strong> We must only use information that would be <strong>known at the time we pretend to predict</strong>. we set that time to <strong>match completion</strong> after the Nexus fails. Oracle’s Elixir records <strong>end-of-game</strong> player totals and the official <code>result</code> in the same row. Our predictors are therefore limited to features that exist at that moment: <code>league</code> and <code>side</code> (fixed for the match), and full-game aggregates <code>kills</code>, <code>deaths</code>, <code>totalgold</code>, <code>damagetochampions</code>, <code>gamelength</code>, and <code>total cs</code>. We do <em>not</em> use anything from <strong>future</strong> games, later splits, or post-match artifacts that are not part of that game’s row. This framing is <strong>retrospective</strong>: we are not claiming to forecast winners before the game starts (that would require only pre-game covariates such as draft-free context); we are learning how <strong>completed-game</strong> performance and context relate to the recorded win/loss label.</p>
+  <p><strong>Evaluation metric.</strong> Our <strong>primary</strong> metric is <strong>accuracy</strong> calculated by the fraction of games correctly labeled on the held-out test set. We use accuracy because it is <strong>directly interpretable</strong> for balanced-ish outcomes and matches the baseline which is that Jhin wins are about 47.5% of games, so neither class overwhelmingly dominates. additionally the  overall error rate is easy to explain to a non-specialist. <strong>Why not F1-score?</strong> F1 which is the harmonic mean of precision and recall for a chosen positive class matters more when <strong>class imbalance</strong> is severe or when <strong>false positives vs false negatives</strong> have asymmetric costs. Here we report accuracy for main model comparison; we additionally study <strong>precision for “Win”</strong> in the fairness step because the assignment asks how reliable <strong>positive predictions</strong> are for different groups. If losses were far rarer than wins, we would emphasize <strong>macro-F1</strong> or <strong>balanced accuracy</strong> instead; we do not use RMSE because the outcome is categorical, not numeric.</p>
+  <p>Implementation details and splits (80/20, <code>random_state=42</code>)
+
+  <h2>Baseline Model</h2>
+  <p>Our baseline model uses a logistic regression classifier to predict game outcome (win/loss) from match- and player-level features. We use Jhin-only data (<code>jhin_df</code>: Jhin bot, complete games). Time of prediction is post-game. Features are <code>league</code>, <code>side</code>, <code>kills</code>, <code>deaths</code>, <code>totalgold</code>, and <code>damagetochampions</code>. Quantitative features (<code>kills</code>, <code>deaths</code>, <code>totalgold</code>, <code>damagetochampions</code>) are standardized with StandardScaler; categorical features (<code>league</code>, <code>side</code>) are encoded with OneHotEncoder (<code>handle_unknown='ignore'</code>). Train accuracy is 82.16% and test accuracy is 80.80% (80/20 split, <code>random_state=42</code>). Test accuracy is close to train accuracy, so the model generalizes reasonably well.</p>
+
+  <h2>Final Model</h2>
+  <p>In our final model, we added two more features. The gamelength and total creep score (total cs). We include gamelength because it is a game-level measure of how long the match lasted since longer games often differ from short ones in how wins and losses unfold. For example, comebacks. We include total cs because it measures player’s farm and correlates with gold and in-game impact, which are key to winning. Total cs is often right-skewed, so we use QuantileTransformer to map it to a more uniform scale and make the relationship with the outcome easier for the model to learn. We use SimpleImputer (median) upstream so that missing values in total cs don’t cause errors within the pipeline.</p>
+  <p>Our final model uses the same Jhin-only data and the same train/test split as the baseline (<code>test_size=0.2</code>, <code>random_state=42</code>) so that test accuracy is directly comparable. We keep logistic regression and encode gamelength with StandardScaler so it is on a similar scale as the other numeric features like kills and gold. We also keep total cs with SimpleImputer then QuantileTransformer. For our hyperparameter tuning we use GridSearchCV with 5-fold CV on the training set only. We tune <code>C</code> (inverse regularization strength) and <code>max_iter</code> because smaller <code>C</code> increases regularization and helps with overfitting on small samples. With <code>refit=True</code>, the best estimator is trained on the entire training set before we evaluate on the held-out test set. The best parameters selected were <code>C=0.1</code> and <code>max_iter=500</code>.</p>
+  <p>Train accuracy is approximately 90.2% and test accuracy is approximately 82.8%. The final model improves on the baseline’s test accuracy, so the added features and tuning are helpful. The gap between train and test suggests some overfitting. This is common with a small Jhin-only sample (~141 rows).</p>
+
+  <h2>Fairness Analysis</h2>
+  <p>We ask whether the <strong>final</strong> classifier (Step 7) is less reliable for <strong>Red-side</strong> than <strong>Blue-side</strong> Jhin bot games when we score <strong>precision for predicting Win</strong>among games where the model predicts a win, what fraction actually won on the <strong>held-out test set</strong> only. <strong>H₀:</strong> precision for Win is the same for Red and Blue up to chance. <strong>H₁:</strong> precision for Win is lower on Red than on Blue. We run a <strong>permutation test</strong> (1,000 shuffles of side labels, fixed counts of Red/Blue rows) on the test predictions and compare the observed gap to the null distribution.</p>
+  <p><strong>Results (same split as Step 7, <code>random_state=42</code>).</strong> Test set size <strong>29</strong> (20 Red, 9 Blue). Observed precision (Win | predicted Win): Red <strong>1.00</strong>, Blue <strong>0.33</strong>, so Red is not worse than Blue on this metric. One-sided p-value (evidence Red worse) ≈ <strong>0.93</strong> we <strong>do not reject H₀</strong> for that directional alternative. since the test set and each subgroup are small, subgroup precision and the p-value are noisy our conclusions are cannot be definitive.</p>
+  <div class="figure">
+    <iframe src="fairness_permutation.html" title="Fairness permutation distribution" width="100%" height="420" style="border: 1px solid #eaeaea; border-radius: 4px;"></iframe>
+    <p class="caption">Permutation distribution of precision(Red) minus precision(Blue) for Win. The dashed line = observed statistic.</p>
+  </div>
 
   <footer>
     <p>Data: <a href="https://oracleselixir.com/">OraclesElixir</a> · Course: <a href="https://github.com/dsc-courses/dsc80-2026-wi">DSC 80, Winter 2026</a></p>
