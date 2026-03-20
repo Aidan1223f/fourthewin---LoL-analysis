@@ -94,6 +94,7 @@
   </div>
 
   <p>We group by <strong>league</strong> and <strong>side</strong> (Blue/Red) and aggregate win rate (<code>result</code> mean) for Jhin bot games.</p>
+  <p>This table shows that Jhin's win rate varies substantially across leagues and sides, with Blue side generally performing better in most leagues, though small sample sizes per cell mean these differences may not be reliable.</p>
   <div class="figure">
     <iframe src="pivot_table.html" title="Pivot: win rate by league and side" width="100%" height="420" style="border: 1px solid #eaeaea; border-radius: 4px; background: #fff;"></iframe>
     <p class="caption">Jhin bot win rate by league and side.</p>
@@ -152,7 +153,7 @@
   <p><strong>Evaluation metric.</strong> Our <strong>primary</strong> metric is <strong>test-set accuracy</strong>. It is <strong>interpretable</strong> here because wins and losses are in the same ballpark (~47.5% vs ~52.5%), so neither class dominates. <strong>Why not only F1?</strong> F1 matters more under <strong>strong imbalance</strong> or <strong>asymmetric</strong> costs of false positives vs false negatives. We still report <strong>precision for predicted Win</strong> in the fairness section. We do not use RMSE because the outcome is categorical.</p>
   <p><strong>Split.</strong> 80% train / 20% test, <code>random_state=42</code>.</p>
 
-  <h2>Baseline model: logistic regression</h2>
+  <h2>Baseline model</h2>
   <p>We fit a <strong>logistic regression</strong> pipeline on <code>jhin_df</code> (Jhin bot, complete games), post-game. <strong>Preprocessing:</strong> <code>StandardScaler</code> on the quantitative columns; <code>OneHotEncoder(handle_unknown='ignore')</code> on the nominal columns.</p>
   <p><strong>Performance.</strong> Train accuracy <strong>~87.5%</strong>, test accuracy <strong>~72.4%</strong>. Train is higher than test, which is common with a small sample and can indicate overfitting or high variance; <em>n</em> = 141 keeps estimates noisy.</p>
   <p><strong>Is the baseline “good”?</strong> Compare to trivial rules: <strong>always predict the majority class</strong> (Loss, ~52.5% of games) → ~52.5% accuracy; <strong>coin-flip</strong> → ~50%. The baseline’s ~72.4% test accuracy is well above both, so it is <strong>useful</strong>: league, side, and box-score stats carry signal about wins. It is <strong>not</strong> perfect (wrong on roughly one in four games), and because predictors are post-game, this is <strong>associative</strong> (“what co-occurs with wins”) rather than a true pre-match forecast.</p>
